@@ -1,58 +1,134 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import arraySort from 'array-sort'
-import * as ReadableAPI from '../utils/ReadableAPI'
+import {
+  Badge,
+  Button,
+  ButtonGroup,
+  Card,
+  CardBody,
+  CardSubtitle,
+  CardText,
+  CardTitle
+} from 'reactstrap'
+import FormPost from './FormPost'
+import Pen from 'react-icons/lib/ti/pen'
+import Up from 'react-icons/lib/ti/thumbs-up'
+import Down from 'react-icons/lib/ti/thumbs-down'
 
 class PostList extends Component {
-    state = {
-        posts: []
-    }
+  state = {
+    filterKey: 'voteScore',
+    openModal: false
+  }
 
-    componentDidMount() {
-        ReadableAPI
-            .getAllPosts()
-            .then(response => this.setState({ posts: response }))
-    }
+  vote = (post, vote) => {
+    post.voteScore += vote
+    const postFilter = this.state.posts.filter(obj => obj.id !== post.id)
+    this.setState({
+      posts: postFilter.concat(post)
+    })
+  }
 
-    orderBy = param => {
-        let resultOrder = []
-        if (param === 'timestamp') {
-            resultOrder = arraySort(this.state.posts, param)
-        } else {
-            resultOrder = arraySort(this.state.posts, param, { reverse: true })
-        }
-        this.setState({ posts: resultOrder })
-    }
+  formatDate = timestamp => {
+    return new Date(timestamp * 1000).toLocaleString()
+  }
 
-    vote = (post, vote) => {        
-        post.voteScore += vote
-        const postFilter = this.state.posts.filter(obj => obj.id !== post.id)
-        this.setState({ posts: postFilter.concat(post) })
-    }
+  toggleModal = () => {
+    this.setState({
+      openModal: !this.state.openModal
+    })
+  }
 
-    render() {
-        const {posts} = this.state
-        return (
-            <div>
-                <button type="button" onClick={() => this.orderBy('voteScore')}>Vote Score</button>
-                <button type="button" onClick={() => this.orderBy('timestamp')}>Created Date</button>
-            <ul type="none">
-                {posts && posts.map(post => (
-                    <li key={post.id}>
-                        <h2>Title: {post.title}</h2> 
-                        <h3>Author: {post.author}</h3>                         
-                        <p><small>Comments: {post.commentCount}</small></p>                    
-                        <p><small>Votes: {post.voteScore}</small></p>
-                        <div>
-                            <button type="button" onClick={() => this.vote(post, 1)}>+</button>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type="button" onClick={() => this.vote(post, -1)}>-</button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-            </div>
-        );
-    }
+  render() {
+    const { data } = this.props
+    const { filterKey, openModal } = this.state
+    const filteredList = data
+      ? arraySort(data, filterKey, { reverse: true })
+      : []
+    return (
+      <div>
+        <FormPost open={openModal} toggle={this.toggleModal} />
+        <div className="clearfix">
+          <Button
+            outline
+            color="primary"
+            size="sm"
+            className="float-left"
+            onClick={() => this.toggleModal()}
+          >
+            <Pen size={20} />
+            New Post
+          </Button>
+          <div className="float-right">
+            <strong>Sort by:</strong>{' '}
+            <Button
+              outline
+              color="dark"
+              size="sm"
+              onClick={() => {
+                this.setState({ filterKey: 'voteScore' })
+              }}
+            >
+              Vote Score
+            </Button>{' '}
+            <Button
+              outline
+              color="dark"
+              size="sm"
+              onClick={() => {
+                this.setState({ filterKey: 'timestamp' })
+              }}
+            >
+              Created Date
+            </Button>
+          </div>
+        </div>
+
+        {filteredList &&
+          filteredList.map(post => (
+            <Card
+              key={post.id}
+              style={{
+                marginBottom: 10,
+                marginTop: 5
+              }}
+            >
+              <CardBody>
+                <CardTitle>
+                  {post.title}
+                  <small className="float-right">
+                    {this.formatDate(post.timestamp)}
+                  </small>
+                </CardTitle>
+                <CardSubtitle>Author: {post.author}</CardSubtitle>
+                <hr />
+                <CardText>{post.body}</CardText>
+                <ButtonGroup>
+                  <Button color="secondary" size="sm">
+                    <Up size={22} />
+                  </Button>
+                  <Button color="danger" size="sm">
+                    <Down size={22} />
+                  </Button>
+                </ButtonGroup>
+                <div className="clearfix float-right">
+                  <Badge color="dark" pill>
+                    Comments: {post.commentCount}
+                  </Badge>{' '}
+                  <Badge color="secondary" pill>
+                    Votes: {post.voteScore}
+                  </Badge>
+                </div>
+              </CardBody>
+            </Card>
+          ))}
+      </div>
+    )
+  }
 }
 
-export default PostList;
+const mapDispatchToProps = {}
+
+export default connect(null, mapDispatchToProps)(PostList)

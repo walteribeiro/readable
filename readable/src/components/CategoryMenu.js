@@ -1,31 +1,38 @@
-import React, {Component} from 'react'
-import * as ReadableAPI from '../utils/ReadableAPI'
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { requestCategories } from '../store/ducks/category'
+import { ListGroup, ListGroupItem } from 'reactstrap'
 
-class CategoryMenu extends Component {
-    state = {
-        categories: []
-    }
+export class CategoryMenu extends Component {
+  componentDidMount = () => {
+    this.props.requestCategories()
+  }
 
-    componentDidMount() {
-        ReadableAPI
-            .getAllCategories()
-            .then(response => this.setState({categories: response.categories}))
-    }
-
-    render() {
-        const {categories} = this.state
-        return (
-            <div>
-                <ul>
-                    {categories && categories.map(obj => (
-                        <li key={obj.name}>
-                            <a href={obj.path}>{obj.name}</a>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
-    }
+  render() {
+    const { categories } = this.props
+    return (
+      <div>
+        <ListGroup>
+          <Link to="/" key="all">
+            <ListGroupItem>All</ListGroupItem>
+          </Link>
+          {categories &&
+            categories.map(obj => (
+              <Link to={obj.path} key={obj.name}>
+                <ListGroupItem>{obj.name}</ListGroupItem>
+              </Link>
+            ))}
+        </ListGroup>
+      </div>
+    )
+  }
 }
 
-export default CategoryMenu
+const mapStateToProps = state => ({ categories: state.category.list })
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ requestCategories }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(CategoryMenu)
