@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import arraySort from 'array-sort'
+import { votePost } from '../store/ducks/post'
 import {
   Badge,
   Button,
@@ -20,7 +21,7 @@ import Down from 'react-icons/lib/ti/thumbs-down'
 class PostList extends Component {
   state = {
     filterKey: 'voteScore',
-    openModal: false
+    openModal: false,
   }
 
   vote = (post, vote) => {
@@ -49,7 +50,9 @@ class PostList extends Component {
       : []
     return (
       <div>
-        <FormPost open={openModal} toggle={this.toggleModal} />
+        <FormPost open={openModal}
+                  toggle={this.toggleModal}
+                  modalTitle="New Post" selectedCategory={this.props.category} />
         <div className="clearfix">
           <Button
             outline
@@ -88,13 +91,7 @@ class PostList extends Component {
 
         {filteredList &&
           filteredList.map(post => (
-            <Card
-              key={post.id}
-              style={{
-                marginBottom: 10,
-                marginTop: 5
-              }}
-            >
+            <Card key={post.id} style={{ marginBottom: 10, marginTop: 5 }}>
               <CardBody>
                 <CardTitle>
                   {post.title}
@@ -106,10 +103,12 @@ class PostList extends Component {
                 <hr />
                 <CardText>{post.body}</CardText>
                 <ButtonGroup>
-                  <Button color="secondary" size="sm">
+                  <Button color="secondary" size="sm"
+                    onClick={() => this.props.votePost(post.id, 'upVote')}>
                     <Up size={22} />
                   </Button>
-                  <Button color="danger" size="sm">
+                  <Button color="danger" size="sm"
+                    onClick={() => this.props.votePost(post.id, 'downVote')}>
                     <Down size={22} />
                   </Button>
                 </ButtonGroup>
@@ -129,6 +128,6 @@ class PostList extends Component {
   }
 }
 
-const mapDispatchToProps = {}
+const mapDispatchToProps = dispatch => bindActionCreators({ votePost }, dispatch)
 
 export default connect(null, mapDispatchToProps)(PostList)

@@ -2,7 +2,7 @@ const api = 'http://localhost:3001'
 
 let token = localStorage.token
 
-if (!token) 
+if (!token)
   token = localStorage.token = Math.random().toString(36).substr(-8)
 
 const headers = {
@@ -16,7 +16,7 @@ export const getAllCategories = () => fetch(`${api}/categories`, {headers})
 
 export const getAllPostsByCategory = (category) => fetch(`${api}/${category}/posts`, {headers})
   .then(res => res.json())
-  .then(data => data)  
+  .then(data => data)
 
 export const getAllPosts = () => fetch(`${api}/posts`, {headers})
   .then(res => res.json())
@@ -50,7 +50,7 @@ export const votePost = (id, vote) => fetch(`${api}/posts/${id}`, {
     ...headers,
     'Content-Type': 'application/json'
   },
-  body: vote
+  body: JSON.stringify({ option: vote })
 }).then(res => res.json())
 
 export const removePost = (id) => fetch(`${api}/posts/${id}`, {
