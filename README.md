@@ -10,7 +10,7 @@ Below you will find some information on how to perform common tasks.
   - [npm test](#npm-test)
   - [npm run build](#npm-run-build)
   - [npm run eject](#npm-run-eject)
-  - [node server.js](#node-server.js)
+  - [node server.js](#node-serverjs)
 - [Installing Dependencies](#installing-dependencies)
 
 ## Folder Structure
