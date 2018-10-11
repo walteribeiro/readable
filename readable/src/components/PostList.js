@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { Link } from 'react-router-dom'
 import arraySort from 'array-sort'
+import { formatDate } from '../utils/helpers'
 import { votePost } from '../store/ducks/post'
 import {
   Badge,
@@ -21,19 +23,7 @@ import Down from 'react-icons/lib/ti/thumbs-down'
 class PostList extends Component {
   state = {
     filterKey: 'voteScore',
-    openModal: false,
-  }
-
-  vote = (post, vote) => {
-    post.voteScore += vote
-    const postFilter = this.state.posts.filter(obj => obj.id !== post.id)
-    this.setState({
-      posts: postFilter.concat(post)
-    })
-  }
-
-  formatDate = timestamp => {
-    return new Date(timestamp * 1000).toLocaleString()
+    openModal: false
   }
 
   toggleModal = () => {
@@ -43,16 +33,18 @@ class PostList extends Component {
   }
 
   render() {
-    const { data } = this.props
+    const { posts } = this.props
     const { filterKey, openModal } = this.state
-    const filteredList = data
-      ? arraySort(data, filterKey, { reverse: true })
+    const filteredList = posts
+      ? arraySort(posts, filterKey, { reverse: true })
       : []
     return (
       <div>
-        <FormPost open={openModal}
-                  toggle={this.toggleModal}
-                  modalTitle="New Post" selectedCategory={this.props.category} />
+        <FormPost
+          open={openModal}
+          toggle={this.toggleModal}
+          modalTitle="Add Post"
+        />
         <div className="clearfix">
           <Button
             outline
@@ -95,20 +87,35 @@ class PostList extends Component {
               <CardBody>
                 <CardTitle>
                   {post.title}
-                  <small className="float-right">
-                    {this.formatDate(post.timestamp)}
-                  </small>
+                  <Link
+                    className="float-right"
+                    to={`${post.category}/${post.id}`}
+                  >
+                    <Button color="link">Details</Button>
+                  </Link>
                 </CardTitle>
-                <CardSubtitle>Author: {post.author}</CardSubtitle>
+                <br />
+                <CardSubtitle>
+                  Author: {post.author}
+                  <div className="float-right">
+                    {formatDate(post.timestamp)}
+                  </div>
+                </CardSubtitle>
                 <hr />
                 <CardText>{post.body}</CardText>
                 <ButtonGroup>
-                  <Button color="secondary" size="sm"
-                    onClick={() => this.props.votePost(post.id, 'upVote')}>
+                  <Button
+                    color="secondary"
+                    size="sm"
+                    onClick={() => this.props.votePost(post.id, 'upVote')}
+                  >
                     <Up size={22} />
                   </Button>
-                  <Button color="danger" size="sm"
-                    onClick={() => this.props.votePost(post.id, 'downVote')}>
+                  <Button
+                    color="danger"
+                    size="sm"
+                    onClick={() => this.props.votePost(post.id, 'downVote')}
+                  >
                     <Down size={22} />
                   </Button>
                 </ButtonGroup>
@@ -128,6 +135,14 @@ class PostList extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({ votePost }, dispatch)
+const mapStateToProps = state => ({
+  posts: state.posts.data
+})
 
-export default connect(null, mapDispatchToProps)(PostList)
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ votePost }, dispatch)
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PostList)

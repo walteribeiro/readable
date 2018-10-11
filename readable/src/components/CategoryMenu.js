@@ -19,8 +19,8 @@ export class CategoryMenu extends Component {
             <ListGroupItem>All</ListGroupItem>
           </Link>
           {categories &&
-            categories.map(obj => (
-              <Link to={obj.path} key={obj.name}>
+            categories.data.map(obj => (
+              <Link to={`/${obj.path}`} key={obj.name}>
                 <ListGroupItem>{obj.name}</ListGroupItem>
               </Link>
             ))}
@@ -30,9 +30,12 @@ export class CategoryMenu extends Component {
   }
 }
 
-const mapStateToProps = state => ({ categories: state.category.list })
+const mapStateToProps = state => ({ categories: state.categories })
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ requestCategories }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(CategoryMenu)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CategoryMenu)

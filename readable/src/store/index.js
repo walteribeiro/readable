@@ -1,11 +1,14 @@
-import { applyMiddleware, createStore, combineReducers } from 'redux'
+import { applyMiddleware, compose, createStore, combineReducers } from 'redux'
 import thunk from 'redux-thunk'
-import category from './ducks/category'
-import post from './ducks/post'
+import categories from './ducks/category'
+import posts from './ducks/post'
 
-const devTools =
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-const reducers = combineReducers({ category, post })
-const store = applyMiddleware(thunk)(createStore)(reducers, devTools)
+const reducers = combineReducers({ categories, posts })
+
+//const devTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+//const store = applyMiddleware(thunk)(createStore)(reducers, devTools)
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)))
 
 export default store

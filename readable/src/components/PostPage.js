@@ -9,7 +9,7 @@ export class PostPage extends Component {
     this.props.requestPostsByCategory(this.props.match.params.category)
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  componentWillReceiveProps = nextProps => {
     if (nextProps.match.params.category !== this.props.match.params.category) {
       this.props.requestPostsByCategory(nextProps.match.params.category)
     }
@@ -18,17 +18,16 @@ export class PostPage extends Component {
   render() {
     return (
       <div>
-        <PostList data={this.props.posts} category={this.props.match.params.category} />
+        <PostList />
       </div>
     )
   }
 }
 
-const mapStateToProps = state => ({
-  posts: state.post.list
-})
-
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ requestPostsByCategory }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(PostPage)
+export default connect(
+  null,
+  mapDispatchToProps
+)(PostPage)

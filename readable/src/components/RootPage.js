@@ -12,17 +12,16 @@ export class RootPage extends Component {
   render() {
     return (
       <div>
-        <PostList data={this.props.posts} />
+        <PostList />
       </div>
     )
   }
 }
 
-const mapStateToProps = state => ({
-  posts: state.post.list
-})
-
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ requestPosts }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(RootPage)
+export default connect(
+  null,
+  mapDispatchToProps
+)(RootPage)

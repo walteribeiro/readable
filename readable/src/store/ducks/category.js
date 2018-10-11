@@ -7,13 +7,13 @@ export const Types = {
 
 // Reducers
 const initialState = {
-  list: []
+  data: []
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case Types.GET_ALL_CATEGORIES:
-      return { ...state, list: action.payload.categories }
+      return { ...state, data: action.payload }
 
     default:
       return state
@@ -28,6 +28,6 @@ export const getAllCategories = categories => ({
 
 export const requestCategories = () => (dispatch, getState) => {
   api.getAllCategories().then(response => {
-    dispatch(getAllCategories(response))
+    dispatch(getAllCategories(response.categories))
   })
 }

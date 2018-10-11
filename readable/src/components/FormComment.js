@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { requestNewPost, requestEditPost } from '../store/ducks/post'
+import { requestNewComment, requestEditComment } from '../store/ducks/post'
 import {
   Button,
-  Col,
   Form,
   FormGroup,
   Modal,
@@ -14,26 +13,26 @@ import {
   Input
 } from 'reactstrap'
 
-class FormPost extends Component {
+class FormComment extends Component {
   state = {
     id: 0,
-    title: '',
+    parentId: 0,
     body: '',
     author: '',
-    category: '',
     timestamp: ''
   }
 
   componentWillReceiveProps = nextProps => {
-    const { post } = nextProps
+    const { comment } = nextProps
 
-    if (post) {
+    if (comment) {
       this.setState({
-        id: post.id,
-        title: post.title,
-        body: post.body,
-        author: post.author,
-        category: post.category
+        id: comment.id,
+        parentId: comment.parentId,
+        body: comment.body,
+        author: comment.author,
+        category: comment.category,
+        timestamp: comment.timestamp
       })
     }
   }
@@ -42,7 +41,7 @@ class FormPost extends Component {
     evt.preventDefault()
 
     if (this.state.id !== 0) {
-      this.props.requestEditPost(this.state)
+      this.props.requestEditComment(this.state)
       this.props.toggle()
     } else {
       const currentDate = new Date()
@@ -50,10 +49,13 @@ class FormPost extends Component {
       this.setState(
         {
           id: `react${currentDate.getTime()}`,
-          timestamp: currentDate.getTime()
+          timestamp: currentDate.getTime(),
+          parentId: this.props.postId,
+          deleted: false,
+          parentDeleted: false
         },
         () => {
-          this.props.requestNewPost(this.state)
+          this.props.requestNewComment(this.state)
           this.props.toggle()
         }
       )
@@ -81,16 +83,6 @@ class FormPost extends Component {
             <ModalBody>
               <FormGroup>
                 <Input
-                  type="text"
-                  required
-                  placeholder="Title"
-                  name="title"
-                  value={this.state.title}
-                  onChange={this.handleInputChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Input
                   type="textarea"
                   required
                   placeholder="What are your thoughts today?"
@@ -99,33 +91,15 @@ class FormPost extends Component {
                   onChange={this.handleInputChange}
                 />
               </FormGroup>
-              <FormGroup row>
-                <Col sm={7}>
-                  <Input
-                    type="text"
-                    required
-                    placeholder="Who are you?"
-                    name="author"
-                    value={this.state.author}
-                    onChange={this.handleInputChange}
-                  />
-                </Col>
-                <Col sm={5}>
-                  <Input
-                    type="select"
-                    required
-                    name="category"
-                    value={this.state.category}
-                    onChange={this.handleInputChange}
-                  >
-                    <option defaultChecked value="">
-                      Select a category
-                    </option>
-                    <option value="react">React</option>
-                    <option value="redux">Redux</option>
-                    <option value="udacity">Udacity</option>
-                  </Input>
-                </Col>
+              <FormGroup>
+                <Input
+                  type="text"
+                  required
+                  placeholder="Who are you?"
+                  name="author"
+                  value={this.state.author}
+                  onChange={this.handleInputChange}
+                />
               </FormGroup>
             </ModalBody>
             <ModalFooter>
@@ -144,9 +118,9 @@ class FormPost extends Component {
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ requestNewPost, requestEditPost }, dispatch)
+  bindActionCreators({ requestNewComment, requestEditComment }, dispatch)
 
 export default connect(
   null,
   mapDispatchToProps
-)(FormPost)
+)(FormComment)
