@@ -125,7 +125,7 @@ Runs the server on port 3001.
 
 ## Installing Dependencies
 
-To install all dependencies do you need run inside the **readable** and the **server-api/api-server** folders the command below.
+To install all dependencies run inside the **readable** and the **server-api/api-server** folders the command below.
 
 ```sh
 npm install

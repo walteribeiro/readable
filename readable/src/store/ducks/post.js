@@ -34,9 +34,10 @@ export default (state = initialState, action) => {
       return { ...state, data: action.payload }
 
     case Types.ADD_POST:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         data: state.data.concat(action.payload)
-      })
+      }
 
     case Types.EDIT_POST:
       return { ...state, selectedPost: action.payload }
@@ -74,9 +75,11 @@ export default (state = initialState, action) => {
       }
 
     case Types.ADD_COMMENT:
-      return Object.assign({}, state, {
+      return {
+        ...state,
+        selectedPost: { ...state.selectedPost, commentCount: state.selectedPost.commentCount + 1},
         comments: state.comments.concat(action.payload)
-      })
+      }
 
     case Types.EDIT_COMMENT:
       return {
@@ -98,6 +101,7 @@ export default (state = initialState, action) => {
     case Types.REMOVE_COMMENT:
       return {
         ...state,
+        selectedPost: { ...state.selectedPost, commentCount: state.selectedPost.commentCount - 1},
         comments: state.comments.filter(item => item.id !== action.payload.id)
       }
 
@@ -191,7 +195,11 @@ export const requestPostsByCategory = category => (dispatch, getState) => {
 
 export const requestPostsById = postId => (dispatch, getState) => {
   api.getPost(postId).then(response => {
-    dispatch(getPostById(response))
+    if (response.id === postId) {
+      dispatch(getPostById(response))
+    } else {
+      window.location.replace('http://localhost:3000/error')
+    }
   })
 }
 

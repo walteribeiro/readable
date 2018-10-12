@@ -4,6 +4,7 @@ import CategoryMenu from './CategoryMenu'
 import RootPage from './RootPage'
 import PostPage from './PostPage'
 import PostDetailPage from './PostDetailPage'
+import NoMatch from './NoMatch'
 import { Container, Col, Navbar, NavbarBrand, Row } from 'reactstrap'
 
 class App extends Component {
@@ -22,6 +23,7 @@ class App extends Component {
             <Col>
               <Switch>
                 <Route exact path="/" component={RootPage} />
+                <Route path="/error" component={NoMatch} />
                 <Route path="/:category/:post_id" component={PostDetailPage} />
                 <Route path="/:category" component={PostPage} />
               </Switch>

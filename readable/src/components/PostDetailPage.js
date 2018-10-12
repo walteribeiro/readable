@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import { formatDate } from '../utils/helpers'
 import {
@@ -146,7 +147,7 @@ const mapDispatchToProps = dispatch =>
     dispatch
   )
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(PostDetailPage)
+)(PostDetailPage))
